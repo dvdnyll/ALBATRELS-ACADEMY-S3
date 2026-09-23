@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DATABASE ALBATRELS | CLASS OF 2025</title>
+<link rel="icon" href="./assets/profile-pic.png" type="image/x-icon" />
+
+<style>
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+body {
+  background-image: url('./assets/99.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Segoe UI", "Poppins", Arial, sans-serif;
+}
+
+/* SEARCH */
+.search-container {
+  width: 100%;
+  max-width: 500px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.search-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.search-box {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 12px;
+  border: none;
+  font-size: 1rem;
+  outline: none;
+  text-align: center;
+}
+
+.search-btn {
+  padding: 0 1rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  background: rgb(235, 164, 11);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+.search-btn:hover {
+  background: rgb(2, 13, 163);
+}
+
+/* RESULT BOX */
+.database-box {
+  background: rgba(0,0,0,.6);
+  padding: 45px;
+  border-radius: 22px;
+  width: 100%;
+  max-width: 760px;
+  display: none;
+}
+
+/* HEADER */
+.result-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.result-header h2 {
+  margin-bottom: 4px;
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.result-header p {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 300;
+  opacity: 0.75;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* REPORT LAYOUT */
+.report-layout {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.report-photo img {
+  width: 190px;
+  border-radius: 12px;
+}
+
+/* RIGHT SIDE */
+.report-right {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 190px;
+}
+
+/* INFO TEXT */
+.report-info p {
+  margin: 8px 0;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.report-info strong {
+  font-weight: 600;
+}
+
+/* DOWNLOAD BUTTON */
+.certificate-btn {
+  margin-top: auto;
+  padding-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px; /* jarak antar tombol */
+}
+
+.btn-link {
+  font-weight: 600;
+  transition: all 300ms ease;
+  padding: 1rem;
+  width: 8rem;
+  border-radius: 2rem;
+}
+
+.btn-color-2:hover {
+  background: rgb(235, 164, 11);
+  color: white;
+}
+
+.btn-color-1:hover {
+  background: rgb(2, 13, 163);
+}
+
+
+.btn-yellow {
+     padding: 0.6rem 1.2rem;
+      border-radius: 20px;
+      border: rgb(235, 164, 11) 0.1rem solid;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+}
+
+.btn-yellow:hover {
+  cursor: pointer;
+}
+
+/* FAIL STATE */
+.btn-red {
+  background: #d9534f;
+  color: #fff;
+  padding: 14px 18px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  border: none;
+  cursor: not-allowed;
+  font-weight: 600;
+}
+
+/* MOBILE */
+@media(max-width:600px){
+  .report-layout {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .report-right {
+    min-height: auto;
+  }
+
+  .certificate-btn {
+    justify-content: center;
+    margin-top: 25px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SEARCH -->
+<div class="search-container" id="search-section">
+  <h1>DATABASE ALBATRELS</h1>
+  <p>CLASS OF 2025</p>
+
+  <div class="search-row">
+    <input
+      type="text"
+      class="search-box"
+      id="lockerInput"
+      placeholder="Enter Locker Code"
+      autocapitalize="none"
+      autocomplete="off"
+    />
+
+    <button class="search-btn" onclick="searchDatabase()">
+      <img src="./assets/search.png" alt="Search">
+    </button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div class="database-box" id="resultBox"></div>
+
+<script>
+let database = [];
+
+fetch("database.json")
+  .then(res => res.json())
+  .then(data => database = data);
+function formatIssue(issue) {
+  if (!issue) return "-";
+
+  // kalau isinya TOMAT
+  if (issue.trim().toUpperCase() === "TOMAT") {
+    return "Albatrels TOMAT";
+  }
+
+  if (issue.trim().toUpperCase() === "TOM") {
+    return "Albatrels Leader";
+  }
+
+  const [code, level] = issue.split(" ");
+
+  if (code === "BAT") return `Albatros ${level}`;
+  if (code === "PET") return `Petrels ${level}`;
+
+  return issue;
+}
+
+function searchDatabase(){
+  const locker = document.getElementById("lockerInput").value.trim();
+  const resultBox = document.getElementById("resultBox");
+
+  if(!locker) return;
+
+  const data = database.find(d => d.LOKER === locker);
+  if(!data) return;
+
+  document.getElementById("search-section").style.display = "none";
+  resultBox.style.display = "block";
+
+  const firstName = data.NAMA.split(" ")[0].toUpperCase();
+  const rawReport = data.Column22 || "-";
+  const report = formatIssue(rawReport);
+
+  const score = data.RESULTS ?? "-";
+
+  const validReport =
+  /^(Petrels|Albatros)\s([1-9]|1\d|2[0-1])$|^Albatrels TOMAT$|^Albatrels Leader$/;
+
+
+  let html = `
+    <div class="result-card">
+      <div class="result-header">
+        <h2>HELLO ${firstName}!</h2>
+        <p>Here is your report</p>
+      </div>
+  `;
+
+  if(validReport.test(report)){
+    html += `
+      <div class="report-layout">
+        <div class="report-photo">
+          <img src="assets/pass/${locker}.jpg"
+               onerror="this.src='assets/pass/default.png'">
+        </div>
+
+        <div class="report-right">
+          <div class="report-info">
+            <p><strong>Number:</strong> ${locker}</p>
+            <p><strong>Name:</strong> ${data.NAMA}</p>
+            <p><strong>Class:</strong> ${data.Column23 ?? "-"}</p>
+            <p><strong>Final score:</strong> ${score}</p>
+            <p><strong>Issue:</strong> Success to be ${report}</p>
+          </div>
+
+          <div id="certificate" class="certificate-btn"></div>
+        </div>
+      </div>
+    `;
+  } else {
+  html += `
+    <div style="width:100%;">
+
+      <img
+        src="assets/FAIL (1).png"
+        alt="Fail"
+        style="
+          width: 100%;
+          max-width: 100%;
+          height: auto;
+          display: block;
+          border-radius: 16px;
+          margin-bottom: 24px;
+        "
+      >
+
+      <div
+        style="
+          text-align: center;
+          font-size: 16px;
+          line-height: 1.8;
+          margin-bottom: 24px;
+        "
+      >
+        Dear ${data.NAMA}, your points ${score} and sorry that you are still below the top twenty one. Hopefully we will meet again in the days ahead. God bless.
+      </div>
+
+      <div
+        style="
+          display: flex;
+          justify-content: center;
+        "
+      >
+        <button
+          onclick=\"window.open(
+            'https://docs.google.com/spreadsheets/d/1-OqJWqtTkomRwaeCuN7djIoY5kW8HuDs_GTjg3YMAGw/edit?usp=sharing',
+            '_blank'
+          )\"
+          style="
+            padding: 0.8rem 1.6rem;
+            border-radius: 2rem;
+            border: 2px solid rgb(2, 13, 163);
+            background: transparent;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 300ms ease;
+          "
+          onmouseover="this.style.background='rgb(2, 13, 163)'"
+          onmouseout="this.style.background='transparent'"
+        >
+          Full Spreadsheet
+        </button>
+      </div>
+
+    </div>
+  `;
+}
+
+
+  html += "</div>";
+  resultBox.innerHTML = html;
+
+  if(validReport.test(report)){
+    const img = new Image();
+    img.src = `certificate/${locker}.jpg`;
+    img.onload = () => {
+    document.getElementById("certificate").innerHTML = `
+  <button
+    onclick="window.open('certificate.html?locker=${locker}', '_blank')"
+    style="
+      padding: 0.8rem 1.6rem;
+      border-radius: 2rem;
+      border: 2px solid rgb(235, 164, 11);
+      background: transparent;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 300ms ease;
+    "
+    onmouseover="this.style.background='rgb(235, 164, 11)'"
+    onmouseout="this.style.background='transparent'"
+  >
+    Certificate
+  </button>
+
+  <button
+    onclick=\"window.open(
+      'https://docs.google.com/spreadsheets/d/1-OqJWqtTkomRwaeCuN7djIoY5kW8HuDs_GTjg3YMAGw/edit?usp=sharing',
+      '_blank'
+    )\"
+    style="
+      padding: 0.8rem 1.6rem;
+      border-radius: 2rem;
+      border: 2px solid rgb(2, 13, 163);
+      background: transparent;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 300ms ease;
+    "
+    onmouseover="this.style.background='rgb(2, 13, 163)'"
+    onmouseout="this.style.background='transparent'"
+  >
+    Full Spreadsheet
+  </button>
+`;
+
+    };
+  }
+}
+</script>
+
+</body>
+</html>
+
+
+
+
+
+

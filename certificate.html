@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Certificate</title>
+<link rel="icon" href="./assets/profile-pic.png" type="image/x-icon" />
+
+<style>
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: url('./assets/99.jpg') center/cover no-repeat fixed;
+  font-family: "Segoe UI", "Poppins", Arial, sans-serif;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.certificate-box {
+  background: rgba(0,0,0,.65);
+  padding: 40px;
+  border-radius: 22px;
+  max-width: 700px;
+  width: 100%;
+  text-align: center;
+}
+
+.certificate-box h1 {
+  margin-bottom: 25px;
+  letter-spacing: 1px;
+}
+
+.certificate-box img {
+  width: 100%;
+  max-width: 520px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+}
+
+.btn-yellow {
+  padding: 0.7rem 1.6rem;
+  border-radius: 22px;
+  background: rgb(235, 164, 11);
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  display: inline-block;
+  margin-bottom: 20px;
+}
+
+.message {
+  font-size: 15px;
+  opacity: .9;
+  line-height: 1.6;
+}
+</style>
+</head>
+
+<body>
+
+<div class="certificate-box">
+  <h1>HERE IS YOUR CERTIFICATE</h1>
+
+  <img id="certificateImage" src="" alt="Certificate">
+
+  <a id="downloadBtn" class="btn-yellow" download>
+    DOWNLOAD CERTIFICATE
+  </a>
+
+  <p class="message">
+  Dear <span id="namaUser"></span>,<br>
+  Welcome home — a small, imperfect place, but always warm when we gather in the living room, sharing stories and laughter around one fireplace that warms us all.
+  God bless.
+</p>
+
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const locker = new URLSearchParams(location.search).get("locker");
+
+fetch("database.json")
+  .then(r => r.json())
+  .then(data => {
+    const user = data.find(d => d.LOKER === locker);
+    document.getElementById("namaUser").textContent =
+      user?.NAMA || "Participant";
+  });
+
+if (locker) {
+  const imgPath = `certificate/${locker}.jpg`;
+  document.getElementById("certificateImage").src = imgPath;
+  document.getElementById("downloadBtn").href = imgPath;
+}
+
+</script>
+
+</body>
+</html>
+
+
+

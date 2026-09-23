@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Locker Room</title>
+
+  <link rel="icon" href="./assets/profile-pic.png" type="image/x-icon" />
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    /* ===== RESET ===== */
+    body {
+      margin: 0;
+      background: black;
+    }
+
+    /* ===== PAGE LAYOUT ===== */
+    .locker-detail-page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-image: url('./assets/90.jpeg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    }
+
+    /* ===== HEADER ===== */
+    .locker-header {
+      text-align: center;
+      margin-top: 100px;
+      margin-bottom: 30px;
+      z-index: 5;
+    }
+
+    .locker-header .title {
+      font-size: clamp(2rem, 4vw, 3rem);
+    }
+
+    .locker-sub {
+      margin-top: 6px;
+      opacity: 0.7;
+    }
+
+    /* ===== GAMBAR LOCKER ===== */
+    .locker-image-wrapper {
+      position: relative;
+      height: calc(100vh - 220px);
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+    }
+
+    /* ===== SHADOW ATAS ===== */
+    .locker-image-wrapper::before {
+      content: "";
+      position: absolute;
+      top: -5%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 85vmin;
+      height: 45vmin;
+      background: radial-gradient(
+        ellipse at top,
+        rgba(0, 0, 0, 0.65) 0%,
+        rgba(0, 0, 0, 0.45) 35%,
+        rgba(0, 0, 0, 0.25) 60%,
+        rgba(0, 0, 0, 0) 100%
+      );
+      filter: blur(35px);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ===== SHADOW KIRI & KANAN ===== */
+    .locker-shadow-sides {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .locker-shadow-sides::before,
+    .locker-shadow-sides::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 20%;
+      filter: blur(30px);
+    }
+
+    .locker-shadow-sides::before {
+      left: 0;
+      background: linear-gradient(
+        to right,
+        rgba(0, 0, 0, 0.55),
+        rgba(0, 0, 0, 0)
+      );
+    }
+
+    .locker-shadow-sides::after {
+      right: 0;
+      background: linear-gradient(
+        to left,
+        rgba(0, 0, 0, 0.55),
+        rgba(0, 0, 0, 0)
+      );
+    }
+
+    .locker-image-wrapper img {
+      position: absolute;
+      height: 100%;
+      width: auto;
+      object-fit: contain;
+      z-index: 1;
+    }
+
+    .locker-open {
+      opacity: 0;
+      transition: opacity 1.4s ease;
+      pointer-events: none;
+    }
+
+    .locker-open.show {
+      opacity: 1;
+    }
+
+    /* ===== BUTTON ===== */
+    .open-locker-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+    }
+
+    .open-locker-btn .btn {
+      box-shadow: 0 10px 30px rgba(0,0,0,0.65);
+    }
+
+    .open-locker-btn.clicked {
+      animation: pop 0.35s ease;
+    }
+
+    @keyframes pop {
+      0% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.15); }
+      100% { transform: translate(-50%, -50%) scale(1); }
+    }
+
+    /* ===== MOBILE ===== */
+    @media (max-width: 768px) {
+      .locker-header {
+        margin-top: 70px;
+        margin-bottom: 20px;
+      }
+
+      .locker-image-wrapper {
+        height: calc(100vh - 200px);
+      }
+
+      .locker-image-wrapper::before {
+        width: 95vmin;
+        height: 50vmin;
+        filter: blur(30px);
+      }
+
+      .locker-shadow-sides::before,
+      .locker-shadow-sides::after {
+        width: 25%;
+      }
+
+      .locker-image-wrapper img {
+        max-width: 100vw;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="locker-detail-page">
+
+    <!-- ===== JUDUL ===== -->
+    <div class="locker-header">
+      <h1 class="title">#0052 LOCKER</h1>
+        <p class="locker-sub"><a href="https://x.com/albatrelsbased" target="_blank">@albatrelsbased</a></p>
+    </div>
+
+    <!-- ===== GAMBAR ===== -->
+    <div class="locker-image-wrapper">
+
+      <!-- shadow kiri & kanan -->
+      <div class="locker-shadow-sides"></div>
+
+      <img src="./assets/LOCKER/CLOSE/CLOSE-0052.png" alt="Locker Close">
+      <img src="./assets/LOCKER/OPEN/OPEN-0052.png" alt="Locker Open" class="locker-open">
+
+      <div class="open-locker-btn">
+        <button class="btn btn-color-2" id="openLockerBtn">
+          Open This Locker
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+  const btn = document.getElementById('openLockerBtn');
+  const openImg = document.querySelector('.locker-open');
+
+  btn.addEventListener('click', () => {
+    btn.classList.add('clicked');
+
+    setTimeout(() => {
+      btn.style.transition = 'opacity 0.5s ease';
+      btn.style.opacity = '0';
+    }, 350);
+
+    setTimeout(() => {
+      btn.style.display = 'none';
+      openImg.classList.add('show');
+    }, 900);
+  });
+</script>
+
+</body>
+</html>
