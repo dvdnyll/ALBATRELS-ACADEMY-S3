@@ -26,7 +26,7 @@ function searchStudent() {
   } else if (input === "geo" || input === "geography" || input === "3" || input === "C" || input === "geografi") {
     file = "GEOGRAPHY CLASS.png";
   } else if (input === "art" || input === "arts" || input === "seni" || input === "2" || input === "B") {
-    file = "ARTS CLASS.png";
+    file = "ART CLASS.png";
   } else if (input === "music" || input === "musik" || input === "6" || input === "F") {
     file = "MUSIC CLASS.png";
   } else if (input === "shop" || input === "teknik" || input === "4" || input === "D" || input === "teknologi") {
