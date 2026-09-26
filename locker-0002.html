@@ -9,13 +9,41 @@
   <link rel="stylesheet" href="style.css" />
 
   <style>
-    /* ===== RESET ===== */
     body {
       margin: 0;
       background: black;
     }
 
-    /* ===== PAGE LAYOUT ===== */
+    /* ===== BACK BUTTON (SAMA DENGAN FILE LAMA) ===== */
+    .back-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 20;
+    }
+
+    .back-btn a {
+      text-decoration: none;
+    }
+
+    .back-btn button {
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .back-btn button:hover {
+      background: rgba(255,255,255,0.15);
+      transform: translateY(-1px);
+    }
+
+    /* ===== PAGE ===== */
     .locker-detail-page {
       min-height: 100vh;
       display: flex;
@@ -28,7 +56,6 @@
       background-attachment: fixed;
     }
 
-    /* ===== HEADER ===== */
     .locker-header {
       text-align: center;
       margin-top: 100px;
@@ -40,12 +67,7 @@
       font-size: clamp(2rem, 4vw, 3rem);
     }
 
-    .locker-sub {
-      margin-top: 6px;
-      opacity: 0.7;
-    }
-
-    /* ===== GAMBAR LOCKER ===== */
+    /* ===== IMAGE WRAPPER ===== */
     .locker-image-wrapper {
       position: relative;
       height: calc(100vh - 220px);
@@ -56,7 +78,7 @@
       z-index: 1;
     }
 
-    /* ===== SHADOW ATAS ===== */
+    /* TOP SHADOW */
     .locker-image-wrapper::before {
       content: "";
       position: absolute;
@@ -77,7 +99,7 @@
       pointer-events: none;
     }
 
-    /* ===== SHADOW KIRI & KANAN ===== */
+    /* SIDE SHADOW */
     .locker-shadow-sides {
       position: absolute;
       inset: 0;
@@ -97,28 +119,22 @@
 
     .locker-shadow-sides::before {
       left: 0;
-      background: linear-gradient(
-        to right,
-        rgba(0, 0, 0, 0.55),
-        rgba(0, 0, 0, 0)
-      );
+      background: linear-gradient(to right, rgba(0,0,0,0.55), transparent);
     }
 
     .locker-shadow-sides::after {
       right: 0;
-      background: linear-gradient(
-        to left,
-        rgba(0, 0, 0, 0.55),
-        rgba(0, 0, 0, 0)
-      );
+      background: linear-gradient(to left, rgba(0,0,0,0.55), transparent);
     }
 
+    /* ===== IMAGES ===== */
     .locker-image-wrapper img {
       position: absolute;
       height: 100%;
       width: auto;
       object-fit: contain;
       z-index: 1;
+      cursor: pointer;
     }
 
     .locker-open {
@@ -129,6 +145,12 @@
 
     .locker-open.show {
       opacity: 1;
+      pointer-events: auto;
+    }
+
+    .locker-open-2 {
+      opacity: 0;
+      pointer-events: none;
     }
 
     /* ===== BUTTON ===== */
@@ -138,10 +160,6 @@
       left: 50%;
       transform: translate(-50%, -50%);
       z-index: 2;
-    }
-
-    .open-locker-btn .btn {
-      box-shadow: 0 10px 30px rgba(0,0,0,0.65);
     }
 
     .open-locker-btn.clicked {
@@ -154,30 +172,13 @@
       100% { transform: translate(-50%, -50%) scale(1); }
     }
 
-    /* ===== MOBILE ===== */
     @media (max-width: 768px) {
       .locker-header {
         margin-top: 70px;
         margin-bottom: 20px;
       }
-
       .locker-image-wrapper {
         height: calc(100vh - 200px);
-      }
-
-      .locker-image-wrapper::before {
-        width: 95vmin;
-        height: 50vmin;
-        filter: blur(30px);
-      }
-
-      .locker-shadow-sides::before,
-      .locker-shadow-sides::after {
-        width: 25%;
-      }
-
-      .locker-image-wrapper img {
-        max-width: 100vw;
       }
     }
   </style>
@@ -185,32 +186,58 @@
 
 <body>
 
-  <div class="locker-detail-page">
+<div class="back-btn">
+  <a href="index.html">
+    <button>← Back</button>
+  </a>
+</div>
 
-    <!-- ===== JUDUL ===== -->
-    <div class="locker-header">
-      <h1 class="title">#0002 LOCKER</h1>
-        <p class="locker-sub"><a href="https://x.com/albatrelsbased" target="_blank">@albatrelsbased</a></p>
-    </div>
+<div class="locker-detail-page">
 
-    <!-- ===== GAMBAR ===== -->
-    <div class="locker-image-wrapper">
-
-      <!-- shadow kiri & kanan -->
-      <div class="locker-shadow-sides"></div>
-
-      <img src="./assets/LOCKER/CLOSE/CLOSE-0002.jpg" alt="Locker Close">
-      <img src="./assets/LOCKER/OPEN/OPEN-0002.jpg" alt="Locker Open" class="locker-open">
-
-      <div class="open-locker-btn">
-        <button class="btn btn-color-2" id="openLockerBtn">
-          Open This Locker
-        </button>
-      </div>
-
-    </div>
+  <div class="locker-header">
+    <h1 class="title">#0002 LOCKER</h1>
   </div>
 
+  <div class="locker-image-wrapper">
+
+    <div class="locker-shadow-sides"></div>
+
+    <img src="./assets/LOCKER/CLOSE/CLOSE-0002.jpg" alt="Locker Close">
+
+    <img src="./assets/LOCKER/OPEN/OZAN.jpg"
+         alt="Locker Open"
+         class="locker-open">
+
+    <img src="./assets/LOCKER/OPEN/OZAN (1).jpg"
+         alt="Locker Open 2"
+         class="locker-open locker-open-2">
+
+    <div class="open-locker-btn">
+      <button class="btn btn-color-2" id="openLockerBtn">
+        Open This Locker
+      </button>
+    </div>
+
+    <!-- PHONE BUTTON -->
+    <div id="phoneBtn" style="
+      position:absolute;
+      bottom:40px;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity 1s ease;
+      z-index:5;
+    ">
+      <a href="https://medium.com/@tulisann/ozans-phone-f2450f462198" target="_blank">
+        <button class="btn btn-color-2">
+          OPEN THIS PHONE
+        </button>
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<!-- SCRIPT LAMA (TIDAK DIUBAH) -->
 <script>
   const btn = document.getElementById('openLockerBtn');
   const openImg = document.querySelector('.locker-open');
@@ -230,5 +257,41 @@
   });
 </script>
 
+<!-- SCRIPT BARU (KLIK TENGAH GAMBAR) -->
+<script>
+  const openImg1 = document.querySelector('.locker-open');
+  const openImg2 = document.querySelector('.locker-open-2');
+  const phoneBtn = document.getElementById('phoneBtn');
+
+  openImg1.addEventListener('click', (e) => {
+    if (!openImg1.classList.contains('show')) return;
+
+    const rect = openImg1.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const toleranceX = rect.width * 0.2;
+    const toleranceY = rect.height * 0.2;
+
+    if (
+      Math.abs(x - centerX) > toleranceX ||
+      Math.abs(y - centerY) > toleranceY
+    ) return;
+
+    openImg1.classList.remove('show');
+
+    setTimeout(() => {
+      openImg2.classList.add('show');
+      phoneBtn.style.opacity = '1';
+      phoneBtn.style.pointerEvents = 'auto';
+    }, 150);
+  });
+</script>
+
 </body>
 </html>
+
+
