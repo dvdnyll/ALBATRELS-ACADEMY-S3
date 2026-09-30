@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>DATABASE ALBATRELS | CLASS OF 2025</title>
+<title>DATABASE ALBATRELS | CLASS OF 2026</title>
 <link rel="icon" href="./assets/profile-pic.png" type="image/x-icon" />
 
 <style>
@@ -210,7 +210,7 @@ body {
 <!-- SEARCH -->
 <div class="search-container" id="search-section">
   <h1>DATABASE ALBATRELS</h1>
-  <p>CLASS OF 2025</p>
+  <p>CLASS OF 2026</p>
 
   <div class="search-row">
     <input
@@ -241,11 +241,11 @@ function formatIssue(issue) {
   if (!issue) return "-";
 
   // kalau isinya TOMAT
-  if (issue.trim().toUpperCase() === "TOMAT") {
-    return "Albatrels TOMAT";
+  if (issue.trim().toUpperCase() === "KNALPOT") {
+    return "Albatrels COD.KNALPOT";
   }
 
-  if (issue.trim().toUpperCase() === "TOM") {
+  if (issue.trim().toUpperCase() === "KNAL") {
     return "Albatrels Leader";
   }
 
@@ -276,7 +276,7 @@ function searchDatabase(){
   const score = data.RESULTS ?? "-";
 
   const validReport =
-  /^(Petrels|Albatros)\s([1-9]|1\d|2[0-1])$|^Albatrels TOMAT$|^Albatrels Leader$/;
+  /^(Petrels|Albatros)\s([1-9]|1\d|2[0-1])$|^Albatrels COD.KNALPOT|^Albatrels Leader$/;
 
 
   let html = `
@@ -397,7 +397,7 @@ function searchDatabase(){
 
   <button
     onclick=\"window.open(
-      'https://docs.google.com/spreadsheets/d/1-OqJWqtTkomRwaeCuN7djIoY5kW8HuDs_GTjg3YMAGw/edit?usp=sharing',
+      'https://docs.google.com/spreadsheets/d/1-QrMPqTcGkeuORfD3g9qUHEdkNg3pk3D-rdoJIglP2Q/edit?usp=sharing',
       '_blank'
     )\"
     style="
