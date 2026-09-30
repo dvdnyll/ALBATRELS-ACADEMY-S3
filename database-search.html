@@ -139,7 +139,7 @@ body {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 16px; /* jarak antar tombol */
+  gap: 16px;
 }
 
 .btn-link {
@@ -159,14 +159,13 @@ body {
   background: rgb(2, 13, 163);
 }
 
-
 .btn-yellow {
-     padding: 0.6rem 1.2rem;
-      border-radius: 20px;
-      border: rgb(235, 164, 11) 0.1rem solid;
-      color: white;
-      cursor: pointer;
-      font-weight: 600;
+  padding: 0.6rem 1.2rem;
+  border-radius: 20px;
+  border: rgb(235, 164, 11) 0.1rem solid;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
 }
 
 .btn-yellow:hover {
@@ -187,6 +186,12 @@ body {
 
 /* MOBILE */
 @media(max-width:600px){
+
+  .database-box {
+    padding: 25px;
+    width: calc(100% - 50px);
+  }
+
   .report-layout {
     flex-direction: column;
     align-items: center;
@@ -195,11 +200,20 @@ body {
 
   .report-right {
     min-height: auto;
+    width: 100%;
   }
 
   .certificate-btn {
     justify-content: center;
     margin-top: 25px;
+  }
+
+  .report-photo img {
+    width: 190px;
+  }
+
+  .result-header h2 {
+    font-size: 28px;
   }
 }
 </style>
@@ -209,10 +223,12 @@ body {
 
 <!-- SEARCH -->
 <div class="search-container" id="search-section">
+
   <h1>DATABASE ALBATRELS</h1>
   <p>CLASS OF 2026</p>
 
   <div class="search-row">
+
     <input
       type="text"
       class="search-box"
@@ -222,211 +238,537 @@ body {
       autocomplete="off"
     />
 
-    <button class="search-btn" onclick="searchDatabase()">
-      <img src="./assets/search.png" alt="Search">
+    <button
+      class="search-btn"
+      onclick="searchDatabase()"
+    >
+      <img
+        src="./assets/search.png"
+        alt="Search"
+      >
     </button>
+
   </div>
+
 </div>
 
+
 <!-- RESULT -->
-<div class="database-box" id="resultBox"></div>
+<div
+  class="database-box"
+  id="resultBox"
+></div>
+
 
 <script>
+
 let database = [];
 
-fetch("database.json")
-  .then(res => res.json())
-  .then(data => database = data);
-function formatIssue(issue) {
-  if (!issue) return "-";
 
-  // kalau isinya TOMAT
-  if (issue.trim().toUpperCase() === "KNALPOT") {
+/* =========================================
+   LOAD DATABASE
+========================================= */
+
+fetch("database.json")
+  .then(res => {
+
+    if (!res.ok) {
+      throw new Error("database.json tidak ditemukan.");
+    }
+
+    return res.json();
+
+  })
+  .then(data => {
+
+    database = data;
+
+  })
+  .catch(error => {
+
+    console.error("Database error:", error);
+
+  });
+
+
+/* =========================================
+   FORMAT ISSUE
+========================================= */
+
+function formatIssue(issue) {
+
+  if (!issue) {
+    return "-";
+  }
+
+  const cleanIssue = issue.trim().toUpperCase();
+
+
+  if (cleanIssue === "KNALPOT") {
     return "Albatrels COD.KNALPOT";
   }
 
-  if (issue.trim().toUpperCase() === "KNAL") {
+
+  if (cleanIssue === "KNAL") {
     return "Albatrels Leader";
   }
 
-  const [code, level] = issue.split(" ");
 
-  if (code === "BAT") return `Albatros ${level}`;
-  if (code === "PET") return `Petrels ${level}`;
+  const parts = issue.trim().split(/\s+/);
+
+  const code = parts[0];
+  const level = parts[1];
+
+
+  if (code === "BAT") {
+    return `Albatros ${level}`;
+  }
+
+
+  if (code === "PET") {
+    return `Petrels ${level}`;
+  }
+
 
   return issue;
 }
 
-function searchDatabase(){
-  const locker = document.getElementById("lockerInput").value.trim();
-  const resultBox = document.getElementById("resultBox");
 
-  if(!locker) return;
+/* =========================================
+   SEARCH DATABASE
+========================================= */
 
-  const data = database.find(d => d.LOKER === locker);
-  if(!data) return;
+function searchDatabase() {
 
-  document.getElementById("search-section").style.display = "none";
+  const lockerInput =
+    document.getElementById("lockerInput");
+
+  const locker =
+    lockerInput.value.trim();
+
+  const resultBox =
+    document.getElementById("resultBox");
+
+
+  if (!locker) {
+    return;
+  }
+
+
+  /* FIND DATA */
+
+  const data = database.find(
+    d => String(d.LOKER).trim() === locker
+  );
+
+
+  if (!data) {
+
+    alert("Locker code not found.");
+
+    return;
+  }
+
+
+  /* HIDE SEARCH */
+
+  document.getElementById(
+    "search-section"
+  ).style.display = "none";
+
+
+  /* SHOW RESULT BOX */
+
   resultBox.style.display = "block";
 
-  const firstName = data.NAMA.split(" ")[0].toUpperCase();
-  const rawReport = data.REPORT || "-";
-  const report = formatIssue(rawReport);
 
-  const score = data.RESULTS ?? "-";
+  /* BASIC DATA */
 
-  const validReport =
-  /^(Petrels|Albatros)\s([1-9]|1\d|2[0-1])$|^Albatrels COD.KNALPOT|^Albatrels Leader$/;
+  const firstName =
+    data.NAMA
+      ? data.NAMA.split(" ")[0].toUpperCase()
+      : "STUDENT";
 
+
+  const rawReport =
+    data.REPORT || "-";
+
+
+  const report =
+    formatIssue(rawReport);
+
+
+  const score =
+    data.RESULTS ?? "-";
+
+
+  /* =========================================
+     BASE HTML
+  ========================================= */
 
   let html = `
+
     <div class="result-card">
+
       <div class="result-header">
-        <h2>HELLO ${firstName}!</h2>
-        <p>Here is your report</p>
+
+        <h2>
+          HELLO ${firstName}!
+        </h2>
+
+        <p>
+          Here is your report
+        </p>
+
       </div>
+
   `;
 
-  if(validReport.test(report)){
+
+  /* =========================================
+     CHECK PHOTO
+     
+     FOTO ADA = PASS
+     FOTO TIDAK ADA = FAIL
+  ========================================= */
+
+  const photo =
+    new Image();
+
+
+  /* =========================================
+     PHOTO EXISTS
+  ========================================= */
+
+  photo.onload = function() {
+
     html += `
+
       <div class="report-layout">
+
+        <!-- PHOTO -->
+
         <div class="report-photo">
-          <img src="assets/pass/${locker}.jpg"
-               onerror="this.src='assets/pass/default.png'">
+
+          <img
+            src="assets/pass/${locker}.jpg"
+            alt="${data.NAMA}"
+          >
+
         </div>
+
+
+        <!-- INFORMATION -->
 
         <div class="report-right">
+
           <div class="report-info">
-            <p><strong>Number:</strong> ${locker}</p>
-            <p><strong>Name:</strong> ${data.NAMA}</p>
-            <p><strong>Class:</strong> ${data.CLASS ?? "-"}</p>
-            <p><strong>Final score:</strong> ${score}</p>
-            <p><strong>Issue:</strong> Success to be ${report}</p>
+
+            <p>
+              <strong>Number:</strong>
+              ${locker}
+            </p>
+
+            <p>
+              <strong>Name:</strong>
+              ${data.NAMA}
+            </p>
+
+            <p>
+              <strong>Class:</strong>
+              ${data.CLASS ?? "-"}
+            </p>
+
+            <p>
+              <strong>Final score:</strong>
+              ${score}
+            </p>
+
+            <p>
+              <strong>Issue:</strong>
+              Success to be ${report}
+            </p>
+
           </div>
 
-          <div id="certificate" class="certificate-btn"></div>
+
+          <div
+            id="certificate"
+            class="certificate-btn"
+          ></div>
+
         </div>
+
       </div>
+
     `;
-  } else {
-  html += `
-    <div style="width:100%;">
 
-      <img
-        src="assets/FAIL (1).png"
-        alt="Fail"
-        style="
-          width: 100%;
-          max-width: 100%;
-          height: auto;
-          display: block;
-          border-radius: 16px;
-          margin-bottom: 24px;
-        "
-      >
 
-      <div
-        style="
-          text-align: center;
-          font-size: 16px;
-          line-height: 1.8;
-          margin-bottom: 24px;
-        "
-      >
-        Dear ${data.NAMA}, your points ${score} and sorry that you are still below the top twenty one. Hopefully we will meet again in the days ahead. God bless.
-      </div>
+    resultBox.innerHTML =
+      html;
 
-      <div
-        style="
-          display: flex;
-          justify-content: center;
-        "
-      >
-        <button
-          onclick=\"window.open(
-            'https://docs.google.com/spreadsheets/d/1-OqJWqtTkomRwaeCuN7djIoY5kW8HuDs_GTjg3YMAGw/edit?usp=sharing',
-            '_blank'
-          )\"
+
+    /* =========================================
+       CHECK CERTIFICATE
+    ========================================= */
+
+    const certificateImg =
+      new Image();
+
+
+    certificateImg.src =
+      `certificate/${locker}.jpg`;
+
+
+    certificateImg.onload =
+      function() {
+
+        const certificate =
+          document.getElementById(
+            "certificate"
+          );
+
+
+        if (!certificate) {
+          return;
+        }
+
+
+        certificate.innerHTML = `
+
+          <button
+            onclick="
+              window.open(
+                'certificate.html?locker=${locker}',
+                '_blank'
+              )
+            "
+            style="
+              padding: 0.8rem 1.6rem;
+              border-radius: 2rem;
+              border: 2px solid rgb(235, 164, 11);
+              background: transparent;
+              color: white;
+              font-weight: 600;
+              cursor: pointer;
+              transition: all 300ms ease;
+            "
+            onmouseover="
+              this.style.background='rgb(235, 164, 11)'
+            "
+            onmouseout="
+              this.style.background='transparent'
+            "
+          >
+            Certificate
+          </button>
+
+
+          <button
+            onclick="
+              window.open(
+                'https://docs.google.com/spreadsheets/d/1-QrMPqTcGkeuORfD3g9qUHEdkNg3pk3D-rdoJIglP2Q/edit?usp=sharing',
+                '_blank'
+              )
+            "
+            style="
+              padding: 0.8rem 1.6rem;
+              border-radius: 2rem;
+              border: 2px solid rgb(2, 13, 163);
+              background: transparent;
+              color: white;
+              font-weight: 600;
+              cursor: pointer;
+              transition: all 300ms ease;
+            "
+            onmouseover="
+              this.style.background='rgb(2, 13, 163)'
+            "
+            onmouseout="
+              this.style.background='transparent'
+            "
+          >
+            Full Spreadsheet
+          </button>
+
+        `;
+
+      };
+
+
+    /* =========================================
+       CERTIFICATE DOES NOT EXIST
+    ========================================= */
+
+    certificateImg.onerror =
+      function() {
+
+        const certificate =
+          document.getElementById(
+            "certificate"
+          );
+
+
+        if (!certificate) {
+          return;
+        }
+
+
+        certificate.innerHTML = `
+
+          <button
+            onclick="
+              window.open(
+                'https://docs.google.com/spreadsheets/d/1-QrMPqTcGkeuORfD3g9qUHEdkNg3pk3D-rdoJIglP2Q/edit?usp=sharing',
+                '_blank'
+              )
+            "
+            style="
+              padding: 0.8rem 1.6rem;
+              border-radius: 2rem;
+              border: 2px solid rgb(2, 13, 163);
+              background: transparent;
+              color: white;
+              font-weight: 600;
+              cursor: pointer;
+              transition: all 300ms ease;
+            "
+            onmouseover="
+              this.style.background='rgb(2, 13, 163)'
+            "
+            onmouseout="
+              this.style.background='transparent'
+            "
+          >
+            Full Spreadsheet
+          </button>
+
+        `;
+
+      };
+
+  };
+
+
+  /* =========================================
+     PHOTO DOES NOT EXIST = FAIL
+  ========================================= */
+
+  photo.onerror = function() {
+
+    html += `
+
+      <div style="width:100%;">
+
+        <img
+          src="assets/FAIL (1).png"
+          alt="Fail"
           style="
-            padding: 0.8rem 1.6rem;
-            border-radius: 2rem;
-            border: 2px solid rgb(2, 13, 163);
-            background: transparent;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 300ms ease;
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 16px;
+            margin-bottom: 24px;
           "
-          onmouseover="this.style.background='rgb(2, 13, 163)'"
-          onmouseout="this.style.background='transparent'"
         >
-          Full Spreadsheet
-        </button>
+
+
+        <div
+          style="
+            text-align: center;
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 24px;
+          "
+        >
+
+          Dear ${data.NAMA}, your points
+          ${score} and sorry that you are
+          still below the top twenty one.
+          Hopefully we will meet again in
+          the days ahead. God bless.
+
+        </div>
+
+
+        <div
+          style="
+            display: flex;
+            justify-content: center;
+          "
+        >
+
+          <button
+            onclick="
+              window.open(
+                'https://docs.google.com/spreadsheets/d/1-OqJWqtTkomRwaeCuN7djIoY5kW8HuDs_GTjg3YMAGw/edit?usp=sharing',
+                '_blank'
+              )
+            "
+            style="
+              padding: 0.8rem 1.6rem;
+              border-radius: 2rem;
+              border: 2px solid rgb(2, 13, 163);
+              background: transparent;
+              color: white;
+              font-weight: 600;
+              cursor: pointer;
+              transition: all 300ms ease;
+            "
+            onmouseover="
+              this.style.background='rgb(2, 13, 163)'
+            "
+            onmouseout="
+              this.style.background='transparent'
+            "
+          >
+            Full Spreadsheet
+          </button>
+
+        </div>
+
       </div>
 
-    </div>
-  `;
+    `;
+
+
+    resultBox.innerHTML =
+      html;
+
+  };
+
+
+  /* =========================================
+     START PHOTO CHECK
+  ========================================= */
+
+  photo.src =
+    `assets/pass/${locker}.jpg`;
+
 }
 
 
-  html += "</div>";
-  resultBox.innerHTML = html;
+/* =========================================
+   ENTER KEY SUPPORT
+========================================= */
 
-  if(validReport.test(report)){
-    const img = new Image();
-    img.src = `certificate/${locker}.jpg`;
-    img.onload = () => {
-    document.getElementById("certificate").innerHTML = `
-  <button
-    onclick="window.open('certificate.html?locker=${locker}', '_blank')"
-    style="
-      padding: 0.8rem 1.6rem;
-      border-radius: 2rem;
-      border: 2px solid rgb(235, 164, 11);
-      background: transparent;
-      color: white;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 300ms ease;
-    "
-    onmouseover="this.style.background='rgb(235, 164, 11)'"
-    onmouseout="this.style.background='transparent'"
-  >
-    Certificate
-  </button>
+document
+  .getElementById("lockerInput")
+  .addEventListener(
+    "keypress",
+    function(event) {
 
-  <button
-    onclick=\"window.open(
-      'https://docs.google.com/spreadsheets/d/1-QrMPqTcGkeuORfD3g9qUHEdkNg3pk3D-rdoJIglP2Q/edit?usp=sharing',
-      '_blank'
-    )\"
-    style="
-      padding: 0.8rem 1.6rem;
-      border-radius: 2rem;
-      border: 2px solid rgb(2, 13, 163);
-      background: transparent;
-      color: white;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 300ms ease;
-    "
-    onmouseover="this.style.background='rgb(2, 13, 163)'"
-    onmouseout="this.style.background='transparent'"
-  >
-    Full Spreadsheet
-  </button>
-`;
+      if (event.key === "Enter") {
 
-    };
-  }
-}
+        searchDatabase();
+
+      }
+
+    }
+  );
+
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
